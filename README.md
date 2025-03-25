@@ -40,4 +40,10 @@ Grammar Style like the ABNF
 - `"..."`: JQ regular expressions
 - `@name` `@"name"`: expected operator, always pattern fail
 
+# Attributes
+- `ignore_rule`: ignore some rule result
+- `inline_rule`: inline some rule
+- `trace`: output peg trace to log, can using [pegview]
+
 [jq-lang]: https://github.com/jqlang/jq
+[pegview]: https://github.com/A4-Tacks/pegview

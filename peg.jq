@@ -42,6 +42,7 @@ def pegparse($topname; $config):
     . as {$i, $result} |
     .fail = false |
     if $pat | type == "string" then
+      if .trace then .log += [{attemping: $pat, at: .i}] end |
       .result += [[]] |
 
       parse(.grammar[$pat]) |
@@ -53,7 +54,13 @@ def pegparse($topname; $config):
         if .inline_rule | has($pat) | not then
           .result[-1][-1] |= {name: $pat, members: .}
         end
-      end
+      end |
+
+      if .trace then .log += [if .fail then
+        {failed: $pat, at: .i}
+      else
+        {matched: $pat, at: $i, to: .i}
+      end] end
 
     elif $pat | type == "array" then
       reduce $pat[] as $pat (.;
@@ -150,6 +157,7 @@ def pegparse($topname; $config):
     end |
     if .fail then .i = $i | .result = $result end
     ;
+
   {
     src: .,
     i: 0,
@@ -158,8 +166,10 @@ def pegparse($topname; $config):
     errpos: 0,
     quiet_level: 0,
     result: [[]],
+    log: [],
   } * $config
   | (.inline_rule, .ignore_rule) |= toset
+  | if .trace then .log += [{init: .i}] end
   | parse($topname)
   | if .i != (.src | length) then .fail = true end
   ;
@@ -263,6 +273,24 @@ def peggrammar:
   end
   ;
 
+def pegshowtrace:
+  def pos($src): . as $i | $src | srcpos($i) | join(":");
+  . as {$src} |
+  .log[] |
+  if .init then
+    if .init == 0 then
+      "[PEG_INPUT_START]\n\($src)\n[PEG_TRACE_START]"
+    else
+      "[PEG_INPUT_START] from \(.init)\n\($src)\n[PEG_TRACE_START]"
+    end
+  elif .attemping then
+    "[PEG_TRACE] Attempting to match rule `\(.attemping)` at \(.at|pos($src))"
+  elif .matched then
+    "[PEG_TRACE] Matched rule `\(.matched)` at \(.at|pos($src)) to \(.to|pos($src))"
+  elif .failed then
+    "[PEG_TRACE] Failed to match rule `\(.failed)` at \(.at|pos($src))"
+  end;
+
 def pegdeclare:
   {
     grammar: $grammar[0],
@@ -272,4 +300,5 @@ def pegdeclare:
 
 #[inputs] | join("\n")
 #| pegparse("decl-list"; pegdeclare)
+#| pegshowtrace # trace or gen parser
 #| pegunwrap | peggrammar
