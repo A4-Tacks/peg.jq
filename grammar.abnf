@@ -1,0 +1,37 @@
+;; use ABNF like grammar
+;; char-val -> regexp (add backslash escape)
+;; add peg lookaheads `!` `&`
+;; add empty `()`
+;; remove num-var
+;;
+;; vim:nowrap
+;; syn match abnfOption /[!&]/
+;; syn match abnfEscape /\\"/ contained containedin=abnfString
+;; hi link abnfEscape Special
+
+comment     = ~";[^\n]*\n" @comment
+_           = ~"[ \t\r\n]*" [comment _]
+ident       = ~"(?![0-9])[0-9a-zA-Z\-_]+" @ident
+number      = ~"[0-9]+" @number
+string      = ~("\"" "((?:\\\"|[^\"\r\n])*)" "\"") @string
+label       = ident / string
+repeat      = "\+"
+            / "\*" [number]
+            / number ["\*" [number]]
+patatom     = ident !(_ "=")            ; a rule reference
+            / string                    ; regular expressions
+            / "\[" _ patchoice _ "\]"   ; optional
+            / "\(" _ patchoice _ "\)"   ; simple paren
+            / "\{" _ patchoice _ "\}"   ; list group brace
+            / "\(\)"        ; empty pattern
+patops      = repeat _ patatom
+            / "&"  patatom  ; positive lookahead
+            / "!"  patatom  ; negative lookahead
+            / "~"  patatom  ; quiet
+            / "\$" patatom  ; slice
+            / patatom
+patlist     = patops *(_ patops)
+patchoice   = patlist *(_ "/" _ patlist)
+              [_ "@" label] ; extra expected branch
+decl        = ident _ "=" _ patchoice
+decl-list   = _ decl *(_ decl) _

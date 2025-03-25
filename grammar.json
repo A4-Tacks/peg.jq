@@ -1,0 +1,246 @@
+{
+  "comment": {
+    "choice": [
+      {
+        "quiet": {
+          "match": ";[^\\n]*\\n"
+        }
+      },
+      {
+        "expected": "comment"
+      }
+    ]
+  },
+  "_": [
+    {
+      "quiet": {
+        "match": "[ \\t\\r\\n]*"
+      }
+    },
+    {
+      "optional": [
+        "comment",
+        "_"
+      ]
+    }
+  ],
+  "ident": {
+    "choice": [
+      {
+        "quiet": {
+          "match": "(?![0-9])[0-9a-zA-Z\\-_]+"
+        }
+      },
+      {
+        "expected": "ident"
+      }
+    ]
+  },
+  "number": {
+    "choice": [
+      {
+        "quiet": {
+          "match": "[0-9]+"
+        }
+      },
+      {
+        "expected": "number"
+      }
+    ]
+  },
+  "string": {
+    "choice": [
+      {
+        "quiet": [
+          {
+            "match": "\""
+          },
+          {
+            "match": "((?:\\\\\"|[^\"\\r\\n])*)"
+          },
+          {
+            "match": "\""
+          }
+        ]
+      },
+      {
+        "expected": "string"
+      }
+    ]
+  },
+  "label": {
+    "choice": [
+      "ident",
+      "string"
+    ]
+  },
+  "repeat": {
+    "choice": [
+      {
+        "match": "\\+"
+      },
+      [
+        {
+          "match": "\\*"
+        },
+        {
+          "optional": "number"
+        }
+      ],
+      [
+        "number",
+        {
+          "optional": [
+            {
+              "match": "\\*"
+            },
+            {
+              "optional": "number"
+            }
+          ]
+        }
+      ]
+    ]
+  },
+  "patatom": {
+    "choice": [
+      [
+        "ident",
+        {
+          "look": [
+            "_",
+            {
+              "match": "="
+            }
+          ],
+          "invert": true
+        }
+      ],
+      "string",
+      [
+        {
+          "match": "\\["
+        },
+        "_",
+        "patchoice",
+        "_",
+        {
+          "match": "\\]"
+        }
+      ],
+      [
+        {
+          "match": "\\("
+        },
+        "_",
+        "patchoice",
+        "_",
+        {
+          "match": "\\)"
+        }
+      ],
+      [
+        {
+          "match": "\\{"
+        },
+        "_",
+        "patchoice",
+        "_",
+        {
+          "match": "\\}"
+        }
+      ],
+      {
+        "match": "\\(\\)"
+      }
+    ]
+  },
+  "patops": {
+    "choice": [
+      [
+        "repeat",
+        "_",
+        "patatom"
+      ],
+      [
+        {
+          "match": "&"
+        },
+        "patatom"
+      ],
+      [
+        {
+          "match": "!"
+        },
+        "patatom"
+      ],
+      [
+        {
+          "match": "~"
+        },
+        "patatom"
+      ],
+      [
+        {
+          "match": "\\$"
+        },
+        "patatom"
+      ],
+      "patatom"
+    ]
+  },
+  "patlist": [
+    "patops",
+    {
+      "repeat": [
+        "_",
+        "patops"
+      ],
+      "to": true
+    }
+  ],
+  "patchoice": [
+    "patlist",
+    {
+      "repeat": [
+        "_",
+        {
+          "match": "/"
+        },
+        "_",
+        "patlist"
+      ],
+      "to": true
+    },
+    {
+      "optional": [
+        "_",
+        {
+          "match": "@"
+        },
+        "label"
+      ]
+    }
+  ],
+  "decl": [
+    "ident",
+    "_",
+    {
+      "match": "="
+    },
+    "_",
+    "patchoice"
+  ],
+  "decl-list": [
+    "_",
+    "decl",
+    {
+      "repeat": [
+        "_",
+        "decl"
+      ],
+      "to": true
+    },
+    "_"
+  ]
+}
