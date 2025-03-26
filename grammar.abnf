@@ -11,7 +11,7 @@
 
 comment     = ~";[^\n]*\n" @comment
 _           = ~"[ \t\r\n]*" [comment _]
-ident       = ~"(?![0-9])[0-9a-zA-Z\-_]+" @ident
+ident       = ~"[a-zA-Z\-_][0-9a-zA-Z\-_]*" @ident
 number      = ~"[0-9]+" @number
 string      = ~("\"" "((?:\\\"|[^\"\r\n])*)" "\"") @string
 label       = ident / string

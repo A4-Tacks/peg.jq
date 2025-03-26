@@ -47,11 +47,11 @@ def pegparse($topname; $config):
 
       parse(.grammar[$pat]) |
 
-      if .ignore_rule | has($pat) then
+      if .ignore_rule//{} | has($pat) then
         .result |= .[:-1]
       else
         pop_result |
-        if .inline_rule | has($pat) | not then
+        if .inline_rule//{} | has($pat) | not then
           .result[-1][-1] |= {name: $pat, members: .}
         end
       end |
@@ -70,11 +70,10 @@ def pegparse($topname; $config):
       )
 
     elif $pat.match then
-      ((.src[.i:] | match("^(?:\($pat.match))")) as {
-        $length,
-        $string,
-        captures: [{string: $c}]
-      } | .result[-1] += [$c // $string] | .i += $length)
+      ((.src[.i:] | match("^(?:\($pat.match))")) as $m
+      | .result[-1] += [if $m.contains|length!=0 then
+        $m.captures[0].string else $m.string
+      end] | .i += $m.length)
       // expected($pat.match | @json)
 
     elif $pat.look then
@@ -225,7 +224,7 @@ def peggrammar:
   elif $name == "patchoice" then
     {choice: [
       (first|peggrammar),
-      (.[1]|getpath(range(1; length; 2)|[.])|peggrammar),
+      (.[1]|foreach range(1; length; 2) as $i (.;.; .[$i])|peggrammar),
       (.[2]//empty | {expected: .[1]|peggrammar})
     ]} |
     if .choice | length == 1 then
