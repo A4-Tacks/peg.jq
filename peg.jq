@@ -219,7 +219,7 @@ def peggrammar:
       error
     end
   elif $name == "decl-list" then
-    [first, last[] | peggrammar] | from_entries
+    [first[] | peggrammar] | from_entries
   elif $name == "decl" then
     {key: first, value: last} | map_values(peggrammar)
   elif $name == "patchoice" then

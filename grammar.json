@@ -232,13 +232,12 @@
     "patchoice"
   ],
   "decl-list": [
-    "_",
-    "decl",
     {
       "repeat": [
         "_",
         "decl"
       ],
+      "base": 1,
       "to": true
     },
     "_"
