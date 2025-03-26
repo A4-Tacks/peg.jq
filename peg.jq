@@ -69,12 +69,20 @@ def pegparse($topname; $config):
         end
       )
 
+    elif $pat.keyword then
+      if .src[.i:] | startswith($pat.keyword) then
+        .i += ($pat.keyword | length) |
+        .result[-1] += [$pat.keyword]
+      else
+        expected($pat.keyword | @json)
+      end
+
     elif $pat.match then
       ((.src[.i:] | match("^(?:\($pat.match))")) as $m
       | .result[-1] += [if $m.contains|length!=0 then
         $m.captures[0].string else $m.string
       end] | .i += $m.length)
-      // expected($pat.match | @json)
+      // expected("<\($pat.match)>")
 
     elif $pat.look then
       .quiet_level += 1 |
@@ -197,7 +205,9 @@ def peggrammar:
   elif $name == "number" then
     first[0] | tonumber
   elif $name == "string" then
-    {match: first[1] | gsub("\\\\\""; "\"")}
+    {keyword: first[1]}
+  elif $name == "match" then
+    {match: first[1]}
   elif $name == "label" then
     first[0] | if .name == "string" then
       .members[0][1] | gsub("\\\\\""; "\"")
@@ -257,13 +267,13 @@ def peggrammar:
     elif last == 1 then
       first | peggrammar
     elif last == 2 then
-      {optional: .[1] | peggrammar}
+      first | peggrammar
     elif last == 3 then
-      .[1] | peggrammar
+      {optional: .[1] | peggrammar}
     elif last == 4 then
-      {scope: .[1] | peggrammar}
+      .[1] | peggrammar
     elif last == 5 then
-      []
+      {scope: .[1] | peggrammar}
     else
       error
     end

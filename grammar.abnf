@@ -1,34 +1,34 @@
 ;; use ABNF like grammar
-;; char-val -> regexp (add backslash escape)
+;; char-val to case-sensitive
+;; prose-val -> regexp
 ;; add peg lookaheads `!` `&`
-;; add empty `()`
+;; add quiet `~`
+;; add slice `$`
 ;; remove num-var
 ;;
 ;; vim:nowrap
-;; syn match abnfOption /[!&]/
-;; syn match abnfEscape /\\"/ contained containedin=abnfString
-;; hi link abnfEscape Special
 
-comment     = ~";[^\n]*\n" @comment
-_           = ~"[ \t\r\n]*" [comment _]
-ident       = ~"[a-zA-Z\-_][0-9a-zA-Z\-_]*" @ident
-number      = ~"[0-9]+" @number
-string      = ~("\"" "((?:\\\"|[^\"\r\n])*)" "\"") @string
+comment     = ~<;[^\n]*\n> @comment
+_           = ~<[ \t\r\n]*> [comment _]
+ident       = ~<(?![0-9])[0-9a-zA-Z\-_]+> @ident
+number      = ~<[0-9]+> @number
+string      = ~(<"> <[^\"\r\n]*> <">) @string
+match       = ~("<" <[^\x3e\r\n]*> ">") @match
 label       = ident / string
-repeat      = "\+"
-            / "\*" [number]
-            / number ["\*" [number]]
+repeat      = "+"
+            / "*" [number]
+            / number ["*" [number]]
 patatom     = ident !(_ "=")            ; a rule reference
-            / string                    ; regular expressions
-            / "\[" _ patchoice _ "\]"   ; optional
-            / "\(" _ patchoice _ "\)"   ; simple paren
-            / "\{" _ patchoice _ "\}"   ; list group brace
-            / "\(\)"        ; empty pattern
+            / string                    ; keyword
+            / match                     ; regular expressions
+            / "[" _ patchoice _ "]"     ; optional
+            / "(" _ patchoice _ ")"     ; simple paren
+            / "{" _ patchoice _ "}"     ; list group brace
 patops      = repeat _ patatom
-            / "&"  patatom  ; positive lookahead
-            / "!"  patatom  ; negative lookahead
-            / "~"  patatom  ; quiet
-            / "\$" patatom  ; slice
+            / "&" patatom   ; positive lookahead
+            / "!" patatom   ; negative lookahead
+            / "~" patatom   ; quiet
+            / "$" patatom   ; slice
             / patatom
 patlist     = patops *(_ patops)
 patchoice   = patlist *(_ "/" _ patlist)
