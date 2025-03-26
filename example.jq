@@ -33,10 +33,10 @@ def eval:
   ;
 
 "
-num = \"[0-9]+\" / \"\\(\" add \"\\)\"
+num = <[0-9]+> / \"(\" add \")\"
 neg = *\"-\" num
-mul = neg *{\"[*/]\" neg}
-add = mul *{\"[+-]\" mul}
+mul = neg *{<[*/]> neg}
+add = mul *{<[+-]> mul}
 "
 | pegparse("decl-list"; pegdeclare) # parse declare
 | pegunwrap
