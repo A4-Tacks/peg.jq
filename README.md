@@ -39,7 +39,11 @@ Grammar Style like the ABNF
 - `*` `1*` `*1` `2*4`: ABNF style repeat
 - `"..."`: case-sensitive string
 - `<...>`: JQ regular expressions
-- `@name` `@"name"`: expected operator, always pattern fail
+- `@name` `@"name"`: expected operator, always pattern fail.
+  precedence equal choice (`/`)
+
+* `(...)`: group
+* `{...}`: scoped group
 
 
 # Attributes
