@@ -173,38 +173,43 @@
       ]
     ]
   },
-  "patops": {
+  "patrepeat": {
     "choice": [
       [
         "repeat",
         "_",
         "patatom"
       ],
+      "patatom"
+    ]
+  },
+  "patops": {
+    "choice": [
       [
         {
           "keyword": "&"
         },
-        "patatom"
+        "patrepeat"
       ],
       [
         {
           "keyword": "!"
         },
-        "patatom"
+        "patrepeat"
       ],
       [
         {
           "keyword": "~"
         },
-        "patatom"
+        "patrepeat"
       ],
       [
         {
           "keyword": "$"
         },
-        "patatom"
+        "patrepeat"
       ],
-      "patatom"
+      "patrepeat"
     ]
   },
   "patlist": [
