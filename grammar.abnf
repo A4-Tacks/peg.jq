@@ -24,12 +24,13 @@ patatom     = ident !(_ "=")            ; a rule reference
             / "[" _ patchoice _ "]"     ; optional
             / "(" _ patchoice _ ")"     ; simple paren
             / "{" _ patchoice _ "}"     ; list group brace
-patops      = repeat _ patatom
-            / "&" patatom   ; positive lookahead
-            / "!" patatom   ; negative lookahead
-            / "~" patatom   ; quiet
-            / "$" patatom   ; slice
+patrepeat   = repeat _ patatom
             / patatom
+patops      = "&" patrepeat ; positive lookahead
+            / "!" patrepeat ; negative lookahead
+            / "~" patrepeat ; quiet
+            / "$" patrepeat ; slice
+            / patrepeat
 patlist     = patops *(_ patops)
 patchoice   = patlist *(_ "/" _ patlist)
               [_ "@" label] ; extra expected branch

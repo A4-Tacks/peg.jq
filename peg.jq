@@ -244,19 +244,26 @@ def peggrammar:
   elif $name == "patlist" then
     [first, last[] | peggrammar] |
     if length == 1 then first end
-  elif $name == "patops" then
+  elif $name == "patrepeat" then
     first |
     if last == 0 then
       {repeat: .[1] | peggrammar}+(first | peggrammar)
     elif last == 1 then
+      first | peggrammar
+    else
+      error
+    end
+  elif $name == "patops" then
+    first |
+    if last == 0 then
       {look: .[1] | peggrammar}
-    elif last == 2 then
+    elif last == 1 then
       {look: .[1] | peggrammar, invert: true}
-    elif last == 3 then
+    elif last == 2 then
       {quiet: .[1] | peggrammar}
-    elif last == 4 then
+    elif last == 3 then
       {slice: .[1] | peggrammar}
-    elif last == 5 then
+    elif last == 4 then
       first | peggrammar
     else
       error
@@ -310,5 +317,5 @@ def pegdeclare:
 
 #[inputs] | join("\n")
 #| pegparse("decl-list"; pegdeclare)
-#| pegshowtrace # trace or gen parser
+##| pegshowtrace # trace or gen parser
 #| pegunwrap | peggrammar
