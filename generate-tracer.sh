@@ -44,7 +44,7 @@ if [ $# -ne 0 ]; then
     exit 2
 fi
 
-hash cat jq dirname sed
+hash cat jaq dirname sed
 
 cd -- "$(command dirname -- "$0")" || exit
 
@@ -99,7 +99,7 @@ end
 EOF
 )
 
-exec jq "$peg_jq"$'\n'"$jq_script" \
+exec jaq "$peg_jq"$'\n'"$jq_script" \
     -Rnr \
     --rawfile input_grammar "$grammar" \
     --argjson grammar "[$peg_grammar]" \
