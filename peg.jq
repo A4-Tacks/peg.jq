@@ -45,7 +45,7 @@ def pegparse($topname; $config):
       if .trace then .log += [{attemping: $pat, at: .i}] end |
       .result += [[]] |
 
-      parse(.grammar[$pat]) |
+      parse(.grammar[$pat] // error("cannot find rule \($pat)")) |
 
       if .ignore_rule//{} | has($pat) then
         .result |= .[:-1]
