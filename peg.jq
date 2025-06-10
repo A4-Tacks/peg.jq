@@ -2,7 +2,7 @@ import "grammar" as $grammar;
 
 def srcpos($index):
   def x: if $index >= length then "x" else empty end;
-  reduce ((.[:$index+1] | scan("."; "m")), x) as $ch ([1, null, false];
+  reduce ((.[:$index+1] | scan(".|[\\r\\n]"; "mg")), x) as $ch ([1, null, false];
     if last then .[0] += 1 | .[1] = 1 | last = false
     else .[1] += 1
     end |
@@ -185,7 +185,7 @@ def pegunwrap:
   if .fail then
     .errpos as $i |
     error(
-      "error at \(.src|srcpos($i)|join(":")) (\($i))"
+      "error at \(.src|srcpos($i)|map(tostring)|join(":")) (\($i))"
       +", expected "
       +(if .expected | length == 1 then
         .expected|keys[]
@@ -290,7 +290,7 @@ def peggrammar:
   ;
 
 def pegshowtrace:
-  def pos($src): . as $i | $src | srcpos($i) | join(":");
+  def pos($src): . as $i | $src | srcpos($i) | map(tostring) | join(":");
   . as {$src} |
   .log[] |
   if .init then
