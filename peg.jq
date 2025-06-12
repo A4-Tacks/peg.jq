@@ -224,7 +224,7 @@ def peggrammar:
       {to: ((.[1]//empty|.[0]|peggrammar)//true)}
     elif last == 2 then
       {base: first|peggrammar}+({to:
-        (.[1]//empty|(.[1][0]//empty|peggrammar)//true)
+        (.[1]//empty|(.[1]//empty|.[0]//empty|peggrammar)//true)
       }//{})
     else
       error
