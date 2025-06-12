@@ -95,7 +95,7 @@ jq_script=$(cat << \EOF
     )" | halt_error(1)
 end
 | pegparse($top; {$grammar, trace: true})
-| pegshowtrace
+| pegshowtrace, (pegunwrap|empty)
 EOF
 )
 
