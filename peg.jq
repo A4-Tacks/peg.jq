@@ -31,7 +31,9 @@ def pegparse($topname; $config):
         .errpos = .i | .expected = {}
       end |
 
-      .expected[$expected] = true
+      if .i == .errpos then
+        .expected[$expected] = true
+      end
     end
     ;
   def pop_result:
