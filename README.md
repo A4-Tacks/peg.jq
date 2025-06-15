@@ -1,5 +1,18 @@
 Parsing Expression Grammar impl for [jq-lang]
 
+Can generate CLI tools for quickly running grammars:
+
+```sh
+$ ./generate-tracer.sh > tracepeg && chmod a+x tracepeg
+$ ./tracepeg -h
+Usage: tracepeg [Options] <Grammar> [Input]
+Trace peg.jq grammar
+
+Options:
+    -t <NAME>          top rule name
+    -h                 show help
+```
+
 # Examples
 ```
 $ ./example.jq
