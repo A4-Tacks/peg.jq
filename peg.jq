@@ -237,7 +237,7 @@ def peggrammar:
     {choice: [
       (first|peggrammar),
       (.[1]|foreach range(1; length; 2) as $i (.;.; .[$i])|peggrammar),
-      (.[2]//empty | {expected: .[1]|peggrammar})
+      (.[2]//empty | {expected: .[range(1; length; 2)]|peggrammar})
     ]} |
     if .choice | length == 1 then
       .choice | if length == 1 then first end

@@ -33,6 +33,6 @@ patops      = "&" patrepeat ; positive lookahead
             / patrepeat
 patlist     = patops *(_ patops)
 patchoice   = patlist *(_ "/" _ patlist)
-              [_ "@" label] ; extra expected branch
+              *(_ "@" label); extra expected branch
 decl        = ident _ "=" _ patchoice
 decl-list   = +(_ decl) _
