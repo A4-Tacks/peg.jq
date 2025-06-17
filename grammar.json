@@ -236,13 +236,14 @@
       "to": true
     },
     {
-      "optional": [
+      "repeat": [
         "_",
         {
           "keyword": "@"
         },
         "label"
-      ]
+      ],
+      "to": true
     }
   ],
   "decl": [
