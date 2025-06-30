@@ -52,7 +52,11 @@ script_head=$(cat << \OEOF
 top_rule_name=decl-list
 
 OPTIND=1
-while getopts ht: opt; do case "$opt" in
+args=()
+while case "${!OPTIND---}" in
+    -*?)false;;
+    *)  args+=("${!OPTIND}"); ((++OPTIND)); continue
+esac || getopts ht: opt; do case "$opt" in
     h)
         printf 'Usage: %q [Options] <Grammar> [Input]\n' "${0##*/}"
         echo 'Trace peg.jq grammar'
@@ -69,7 +73,7 @@ while getopts ht: opt; do case "$opt" in
         printf '%q: parse args failed, near by %q\n' "$0" "${!OPTIND}" >&2
         exit 2
 esac done
-set -- "${@:OPTIND}"
+set -- "${args[@]}" "${@:OPTIND}"
 if [ $# -gt 2 ]; then
     printf '%q: unexpected arg %q\n' "$0" "$1" >&2
     exit 2
