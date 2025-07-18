@@ -292,7 +292,8 @@ def peggrammar:
   ;
 
 def pegshowtrace:
-  def pos($src): . as $i | $src | srcpos($i) | map(tostring) | join(":");
+  #def pos($src): . as $i | $src | srcpos($i) | map(tostring) | join(":");
+  def pos($src): "#\(.)";
   . as {$src} |
   .log[] |
   if .init then
