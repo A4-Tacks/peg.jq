@@ -66,4 +66,4 @@ jq -nR "$(<peg.jq)$gen_proc" ./grammar.abnf > grammar_newgen.json
 
 diff grammar.json grammar_newgen.json
 
-rm grammar_newgen.json
+rm grammar_newgen.json grammar_old.json
