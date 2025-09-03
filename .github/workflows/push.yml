@@ -14,21 +14,26 @@ jobs:
         include:
           - branch: main
             name: tracepeg
-            tool: jq
-          #- branch: jaq-support
-          #  name: tracepeg-jaq
-          #  tool: jaq # ubuntu apt not contain jaq
+            boot: ''
+          - branch: jaq-support
+            name: tracepeg-jaq
+            boot: |
+              set -x &&
+                wget https://github.com/01mf02/jaq/releases/download/v2.3.0/jaq-x86_64-unknown-linux-musl &&
+                mv "${_##*/}" jaq &&
+                chmod a+x jaq
+
     name: ${{ matrix.name }}
     steps:
-      - uses: ConorMacBride/install-package@v1
-        with:
-          apt: ${{ matrix.tool }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           ref: ${{ matrix.branch }}
 
-      - run: ./generate-tracer.sh > ${{ matrix.name }}
+      - name: Boot
+        run: ${{ matrix.boot }}
+      - run: PATH=.:$PATH ./bootstarp.sh
+      - run: PATH=.:$PATH ./generate-tracer.sh > ${{ matrix.name }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}
