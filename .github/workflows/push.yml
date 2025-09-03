@@ -34,6 +34,7 @@ jobs:
         run: ${{ matrix.boot }}
       - run: PATH=.:$PATH ./bootstarp.sh
       - run: PATH=.:$PATH ./generate-tracer.sh > ${{ matrix.name }}
+      - run: chmod a+x ${{ matrix.name }}
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.name }}
