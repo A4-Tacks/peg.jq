@@ -10,7 +10,7 @@
 
 comment     = ~<;[^\n]*(?:\n|$)> @comment
 _           = ~<[ \t\r\n]*> [comment _]
-ident       = ~<(?![0-9])[0-9a-zA-Z\-_]+> @ident
+ident       = ~<(?![0-9])(?:[0-9a-zA-Z\-_]|[^\x00-\xa0])+> @ident
 number      = ~<[0-9]+> @number
 string      = ~(<"> <[^\"\r\n]*> <">) @string
 match       = ~("<" <[^\x3e\r\n]*> ">") @match
