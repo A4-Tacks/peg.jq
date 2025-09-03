@@ -1,0 +1,35 @@
+name: generate tracepeg
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  modify-version-and-upload:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - branch: main
+            name: tracepeg
+            tool: jq
+          #- branch: jaq-support
+          #  name: tracepeg-jaq
+          #  tool: jaq # ubuntu apt not contain jaq
+    name: ${{ matrix.name }}
+    steps:
+      - uses: ConorMacBride/install-package@v1
+        with:
+          apt: ${{ matrix.tool }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ matrix.branch }}
+
+      - run: ./generate-tracer.sh > ${{ matrix.name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.name }}
+          path: ${{ matrix.name }}
